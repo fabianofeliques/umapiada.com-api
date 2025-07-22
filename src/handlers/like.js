@@ -19,7 +19,8 @@ export async function like({ request, env }) {
 		await env.LIKES.put(voteKey, 'liked', { expirationTtl: 86400 }); // expire in 1 day
 
 		return new Response(JSON.stringify({ message: 'Liked', count: count + 1 }), {
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+				"Access-Control-Allow-Origin": "*" },
 		});
 	}
 
@@ -31,7 +32,8 @@ export async function like({ request, env }) {
 		const count = parseInt(await env.LIKES.get(key) || '0', 10);
 
 		return new Response(JSON.stringify({ count }), {
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+				"Access-Control-Allow-Origin": "*" },
 		});
 	}
 
