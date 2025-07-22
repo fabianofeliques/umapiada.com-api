@@ -20,9 +20,8 @@ export async function like(request, env) {
 				return jsonResponse({ message: "Already liked" }, 400);
 			}
 
-			const key = `likes:${jokeId}`;
-			const count = parseInt(await env.LIKES.get(key) || '0', 10);
-			await env.LIKES.put(key, (count + 1).toString());
+			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
+			await env.LIKES.put(jokeId, (count + 1).toString());
 			await env.LIKES.put(voteKey, 'liked', { expirationTtl: 86400 }); // expire in 1 day
 
 			return jsonResponse({ message: 'Liked', count: count + 1 });
@@ -38,9 +37,7 @@ export async function like(request, env) {
 			const jokeId = url.searchParams.get('jokeId');
 			if (!jokeId) return jsonResponse({ message: "Missing jokeId" }, 400);
 
-
-			const key = `likes:${jokeId}`;
-			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
 
 			return jsonResponse(count);
 		} catch (err) {

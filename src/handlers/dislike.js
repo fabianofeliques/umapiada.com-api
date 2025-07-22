@@ -15,15 +15,13 @@ export async function dislike(request, env) {
 				return jsonResponse({ message: "Missing jokeId" }, 400);
 
 			const voteKey = `voted:${ip}:${jokeId}`;
-			const alreadyVoted = await env.LIKES.get(voteKey);
+			const alreadyVoted = await env.DISLIKES.get(voteKey);
 			if (alreadyVoted === 'disliked') {
 				return jsonResponse({ message: "Already disliked" }, 400);
 			}
 
-			const key = `dislikes:${jokeId}`;
-			const count = parseInt(await env.LIKES.get(key) || '0', 10);
-			await env.LIKES.put(key, (count + 1).toString());
-			await env.LIKES.put(voteKey, 'disliked', { expirationTtl: 86400 });
+			const count = parseInt(await env.DISLIKES.get(jokeId) || '0', 10);
+			await env.DISLIKES.put(jokeId, (count + 1).toString());
 
 			return jsonResponse({ message: 'Disliked', count: count + 1 });
 		} catch (err) {
@@ -38,9 +36,7 @@ export async function dislike(request, env) {
 			const jokeId = url.searchParams.get('jokeId');
 			if (!jokeId) return jsonResponse({ message: 'Missing jokeId' }, 400);
 
-
-			const key = `dislikes:${jokeId}`;
-			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			const count = parseInt(await env.DISLIKES.get(jokeId) || '0', 10);
 
 			return jsonResponse(count);
 		} catch (err) {
