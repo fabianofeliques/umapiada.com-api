@@ -3,18 +3,17 @@ import { isRateLimited, jsonResponse } from './util';
 export async function like(request, env) {
 	const url = new URL(request.url);
 
-	const ip = request.headers.get("cf-connecting-ip");
-	const isBlocked = await isRateLimited(ip, env);
-
-	if (isBlocked) {
-		return jsonResponse( {message: "Too many requests" }, { status: 429 });
-	}
-
-
 	if (request.method === 'POST') {
+
+		const ip = request.headers.get("cf-connecting-ip");
+		const isBlocked = await isRateLimited(ip, env);
+
+		if (isBlocked) {
+			return jsonResponse({ message: "Too many requests" }, 429);
+		}
+
 		try {
 			const { jokeId } = await request.json();
-			const ip = request.headers.get("CF-Connecting-IP");
 
 			if (!jokeId)
 				return jsonResponse({ message: "Missing jokeId" }, 400);
