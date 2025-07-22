@@ -24,7 +24,6 @@ export async function like(request, env) {
 
 			return jsonResponse({ message: 'Liked', count: count + 1 });
 		} catch (err) {
-			console.log(err)
 			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
 	}
@@ -37,9 +36,8 @@ export async function like(request, env) {
 
 			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
 
-			return jsonResponse(count);
+			return jsonResponse({ count });
 		} catch (err) {
-			console.log(err)
 			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
 	}

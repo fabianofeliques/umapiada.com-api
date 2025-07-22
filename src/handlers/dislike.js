@@ -7,7 +7,7 @@ export async function dislike(request, env) {
 	const isBlocked = await isRateLimited(ip, env);
 
 	if (isBlocked) {
-		return jsonResponse( {message: "Too many requests" },  429 );
+		return jsonResponse({ message: "Too many requests" }, 429);
 	}
 
 	if (request.method === 'POST') {
@@ -23,7 +23,6 @@ export async function dislike(request, env) {
 
 			return jsonResponse({ message: 'Disliked', count: count + 1 });
 		} catch (err) {
-			console.log(err)
 			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
 	}
@@ -36,12 +35,11 @@ export async function dislike(request, env) {
 
 			const count = parseInt(await env.DISLIKES.get(jokeId) || '0', 10);
 
-			return jsonResponse(count);
+			return jsonResponse({ count });
 		} catch (err) {
-			console.log(err)
-		}
 			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
+	}
 
 	return jsonResponse({ message: "Method not allowed" }, 405);
 }
