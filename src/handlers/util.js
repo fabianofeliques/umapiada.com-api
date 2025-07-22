@@ -8,27 +8,17 @@ export function jsonResponse(body, status = 200) {
 	});
 }
 
-export async function isRateLimited(ip) {
-	const cacheKey = new Request(`https://rate-limit.local/${ip}`);
-	const cache = caches.default;
+export async function isRateLimited(ip, env) {
+	const key = `rate-limit:${ip}`;
+	const ttl = 3600; // 1 hour
 
-	let response = await cache.match(cacheKey);
+	let count = await env.RATE_LIMIT.get(key);
+	count = parseInt(count || "0");
 
-	let count = 0;
-	if (response) {
-		const data = await response.json();
-		count = data.count;
+	if (count >= 10) {
+		return true;
 	}
 
-	if (count >= 10) return true;
-
-	await cache.put(
-		cacheKey,
-		new Response(JSON.stringify({ count: count + 1 }), {
-			headers: { 'Content-Type': 'application/json' },
-		}),
-		{ expirationTtl: 3600 } // expire in 1 hour
-	);
-
+	await env.RATE_LIMIT.put(key, (count + 1).toString(), { expirationTtl: ttl });
 	return false;
 }

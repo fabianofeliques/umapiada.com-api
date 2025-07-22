@@ -1,10 +1,14 @@
-import { jsonResponse } from './util';
+import { isRateLimited, jsonResponse } from './util';
 
 export async function dislike(request, env) {
 	const url = new URL(request.url);
 
-	console.log("url pathname " + url.pathname);
-	console.log("request " + request);
+	const ip = request.headers.get("cf-connecting-ip");
+	const isBlocked = await isRateLimited(ip, env);
+
+	if (isBlocked) {
+		return jsonResponse( {message: "Too many requests" },  429 );
+	}
 
 	if (request.method === 'POST') {
 		try {

@@ -3,9 +3,11 @@ import { isRateLimited, jsonResponse } from './util';
 
 export async function handleSubscribe(request, env) {
 
-	const ip = request.headers.get("CF-Connecting-IP");
-	if (await isRateLimited(ip, env)) {
-		return jsonResponse({ message: "Too many requests"}, 429);
+	const ip = request.headers.get("cf-connecting-ip");
+	const isBlocked = await isRateLimited(ip, env);
+
+	if (isBlocked) {
+		return jsonResponse( {message: "Too many requests" },  429 );
 	}
 
 	try {

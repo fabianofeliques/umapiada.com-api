@@ -30,6 +30,10 @@
 		{
 			"binding": "DISLIKES",
 			"id": "2704657d488c4aaa9cd4e081e4ae52cf"
+		},
+		{
+			"binding": "RATE_LIMIT",
+			"id": "83df781192434a1bb8cc5888878e2b0c"
 		}
 	]
 }
