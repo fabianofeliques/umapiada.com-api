@@ -14,7 +14,7 @@ export default {
 		function handleOptions(request) {
 			const headers = {
 				"Access-Control-Allow-Origin": "*",
-				"Access-Control-Allow-Methods": "POST, OPTIONS",
+				"Access-Control-Allow-Methods": "POST, GET, OPTIONS",
 				"Access-Control-Allow-Headers": "Content-Type, Authorization",
 			};
 			return new Response(null, { status: 204, headers });
@@ -28,11 +28,11 @@ export default {
 			return handleSendJoke(request, env);
 		}
 
-		if (request.method === "POST" && url.pathname === "/like") {
+		if (url.pathname === "/like") {
 			return like(request, env);
 		}
 
-		if (request.method === "POST" && url.pathname === "/dislike") {
+		if (url.pathname === "/dislike") {
 			return dislike(request, env);
 		}
 
