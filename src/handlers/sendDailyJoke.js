@@ -1,7 +1,6 @@
 import jokes from "../data/jokes";
 
-export default {
-    async scheduled(event, env, ctx) {
+export async function handleSendJoke(event, env, ctx) {
 
         const list = await env.SUBSCRIBERS.list();
         const emails = list.keys.map(key => key.name);
@@ -32,16 +31,14 @@ export default {
       `,
         };
 
-        // Send individually or batch (Resend supports up to 100 per call)
-        for (let email of emails) {
-            await fetch('https://api.resend.com/emails', {
+				const recipients = emails.slice(0, 100);
+				await fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${env.RESEND_API_KEY}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ...payload, to: email })
+                body: JSON.stringify({ ...payload, to: recipients })
             });
-        }
-    }
-};
+
+    };

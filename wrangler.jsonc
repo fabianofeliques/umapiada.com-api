@@ -2,7 +2,7 @@
 	"name": "api",
 	"type": "javascript",
 	"account_id": "dbd5a055459147c302d18d55e91d4323",
-	"main": "src/index.ts",
+	"main": "src/index.js",
 	"compatibility_date": "2024-07-22",
 
 	"observability": {
