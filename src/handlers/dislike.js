@@ -1,6 +1,6 @@
 import { jsonResponse } from './responseUtil';
 
-export async function dislike({ request, env }) {
+export async function dislike(request, env) {
 	const url = new URL(request.url);
 
 	console.log("url pathname " + url.pathname);

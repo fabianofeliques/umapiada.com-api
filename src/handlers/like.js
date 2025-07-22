@@ -1,6 +1,6 @@
 import { jsonResponse } from './responseUtil';
 
-export async function like({ request, env }) {
+export async function like(request, env) {
 	const url = new URL(request.url);
 
 	console.log("url pathname " + url.pathname);
