@@ -1,10 +1,12 @@
-import { jsonResponse } from './responseUtil';
+import { isRateLimited, jsonResponse } from './util';
 
 export async function like(request, env) {
 	const url = new URL(request.url);
 
-	console.log("url pathname " + url.pathname);
-	console.log("request " + request);
+	const ip = request.headers.get("CF-Connecting-IP");
+	if (await isRateLimited(ip, env)) {
+		return jsonResponse({ message: "Too many requests"}, 429);
+	}
 
 	if (request.method === 'POST') {
 		try {
@@ -14,15 +16,8 @@ export async function like(request, env) {
 			if (!jokeId)
 				return jsonResponse({ message: "Missing jokeId" }, 400);
 
-			const voteKey = `voted:${ip}:${jokeId}`;
-			const alreadyVoted = await env.LIKES.get(voteKey);
-			if (alreadyVoted === 'liked') {
-				return jsonResponse({ message: "Already liked" }, 400);
-			}
-
 			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
 			await env.LIKES.put(jokeId, (count + 1).toString());
-			await env.LIKES.put(voteKey, 'liked', { expirationTtl: 86400 }); // expire in 1 day
 
 			return jsonResponse({ message: 'Liked', count: count + 1 });
 		} catch (err) {

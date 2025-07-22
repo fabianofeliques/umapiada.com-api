@@ -1,4 +1,4 @@
-import { jsonResponse } from './responseUtil';
+import { jsonResponse } from './util';
 
 export async function dislike(request, env) {
 	const url = new URL(request.url);
@@ -13,12 +13,6 @@ export async function dislike(request, env) {
 
 			if (!jokeId)
 				return jsonResponse({ message: "Missing jokeId" }, 400);
-
-			const voteKey = `voted:${ip}:${jokeId}`;
-			const alreadyVoted = await env.DISLIKES.get(voteKey);
-			if (alreadyVoted === 'disliked') {
-				return jsonResponse({ message: "Already disliked" }, 400);
-			}
 
 			const count = parseInt(await env.DISLIKES.get(jokeId) || '0', 10);
 			await env.DISLIKES.put(jokeId, (count + 1).toString());

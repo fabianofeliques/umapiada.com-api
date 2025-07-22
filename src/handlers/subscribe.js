@@ -1,14 +1,5 @@
-import { jsonResponse } from './responseUtil';
+import { isRateLimited, jsonResponse } from './util';
 
-async function isRateLimited(ip, env) {
-	const key = `rate-limit:${ip}`;
-	const count = await env.SUBSCRIBERS.get(key);
-	if (count && parseInt(count) >= 10) return true;
-	await env.SUBSCRIBERS.put(key, `${(parseInt(count) || 0) + 1}`, {
-		expirationTtl: 3600,
-	});
-	return false;
-}
 
 export async function handleSubscribe(request, env) {
 
