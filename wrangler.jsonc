@@ -26,6 +26,10 @@
 		{
 			"binding": "LIKES",
 			"id": "24d8a6506f1f4c75ba553a0ccd524b9c"
+		},
+		{
+			"binding": "DISLIKES",
+			"id": "2704657d488c4aaa9cd4e081e4ae52cf"
 		}
 	]
 }

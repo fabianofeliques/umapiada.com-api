@@ -1,65 +1,53 @@
+import { jsonResponse } from './responseUtil';
+
 export async function dislike({ request, env }) {
 	const url = new URL(request.url);
 
+	console.log("url pathname " + url.pathname);
+	console.log("request " + request);
+
 	if (request.method === 'POST') {
-		const { jokeId } = await request.json();
-		const ip = request.headers.get("CF-Connecting-IP");
+		try {
+			const { jokeId } = await request.json();
+			const ip = request.headers.get("CF-Connecting-IP");
 
-		if (!jokeId) return new Response(JSON.stringify({ message: 'Missing jokeId' }), {
-			status: 400,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
+			if (!jokeId)
+				return jsonResponse({ message: "Missing jokeId" }, 400);
+
+			const voteKey = `voted:${ip}:${jokeId}`;
+			const alreadyVoted = await env.LIKES.get(voteKey);
+			if (alreadyVoted === 'disliked') {
+				return jsonResponse({ message: "Already disliked" }, 400);
 			}
-		});
 
+			const key = `dislikes:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			await env.LIKES.put(key, (count + 1).toString());
+			await env.LIKES.put(voteKey, 'disliked', { expirationTtl: 86400 });
 
-		const voteKey = `voted:${ip}:${jokeId}`;
-		const alreadyVoted = await env.LIKES.get(voteKey);
-		if (alreadyVoted === 'disliked') {
-			return new Response(JSON.stringify({ message: 'Already disliked' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				} });
+			return jsonResponse({ message: 'Disliked', count: count + 1 });
+		} catch (err) {
+			console.log(err)
+			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
-
-		const key = `dislikes:${jokeId}`;
-		const count = parseInt(await env.LIKES.get(key) || '0', 10);
-		await env.LIKES.put(key, (count + 1).toString());
-		await env.LIKES.put(voteKey, 'disliked', { expirationTtl: 86400 });
-
-		return new Response(JSON.stringify({ message: 'Disliked', count: count + 1 }), {
-			headers: { 'Content-Type': 'application/json',
-				"Access-Control-Allow-Origin": "*"  },
-		});
 	}
 
 	if (request.method === 'GET') {
-		const jokeId = url.searchParams.get('jokeId');
-		if (!jokeId) return new Response(JSON.stringify({ message: 'Missing jokeId' }), {
-			status: 400,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
+
+		try {
+			const jokeId = url.searchParams.get('jokeId');
+			if (!jokeId) return jsonResponse({ message: 'Missing jokeId' }, 400);
 
 
-		const key = `dislikes:${jokeId}`;
-		const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			const key = `dislikes:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
 
-		return new Response(JSON.stringify({ count }), {
-			headers: { 'Content-Type': 'application/json' ,
-				"Access-Control-Allow-Origin": "*" },
-		});
-	}
+			return jsonResponse(count);
+		} catch (err) {
+			console.log(err)
+		}
+			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
+		}
 
-	return new Response('Method not allowed', {
-		status: 405,
-		headers: {
-			'Content-Type': 'application/json',
-			'Access-Control-Allow-Origin': '*'
-		}});
+	return jsonResponse({ message: "Method not allowed" }, 405);
 }

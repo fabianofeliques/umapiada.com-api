@@ -1,3 +1,5 @@
+import { jsonResponse } from './responseUtil';
+
 async function isRateLimited(ip, env) {
 	const key = `rate-limit:${ip}`;
 	const count = await env.SUBSCRIBERS.get(key);
@@ -12,55 +14,26 @@ export async function handleSubscribe(request, env) {
 
 	const ip = request.headers.get("CF-Connecting-IP");
 	if (await isRateLimited(ip, env)) {
-		return new Response(JSON.stringify({ message: "Too many requests" }), {
-			status: 429,
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
-			},
-		});
+		return jsonResponse({ message: "Too many requests"}, 429);
 	}
 
 	try {
 		const { email } = await request.json();
 
 		if (!email || !email.includes("@")) {
-			return new Response(JSON.stringify({ message: "Invalid email." }), {
-				status: 400,
-				headers: {
-					"Content-Type": "application/json",
-					"Access-Control-Allow-Origin": "*",
-				},
-			});
+			return jsonResponse({ message: "Invalid email address" }, 400);
 		}
 
 		const existing = await env.SUBSCRIBERS.get(email);
+
 		if (existing) {
-			return new Response(JSON.stringify({ message: "Already subscribed!" }), {
-				status: 400,
-				headers: {
-					"Content-Type": "application/json",
-					"Access-Control-Allow-Origin": "*",
-				},
-			});
+			return jsonResponse({ message: "Already subscribed" }, 400);
 		}
 
 		await env.SUBSCRIBERS.put(email, JSON.stringify({ subscribedAt: Date.now() }));
 
-		return new Response(JSON.stringify({ message: "You're now subscribed!" }), {
-			status: 200,
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
-			},
-		});
+		return jsonResponse({message: "You are now subscribed!"});
 	} catch (err) {
-		return new Response(JSON.stringify({ message: "Something went wrong. Please try again later." }), {
-			status: 500,
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
-			},
-		});
+		return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 	}
 }

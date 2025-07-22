@@ -4,7 +4,7 @@ import { like } from './handlers/like';
 import { dislike } from './handlers/dislike';
 
 export default {
-	async fetch(request, env, ctx) {
+	async fetch(request, env) {
 		const url = new URL(request.url);
 
 		if (request.method === "OPTIONS") {

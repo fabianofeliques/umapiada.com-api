@@ -1,65 +1,53 @@
+import { jsonResponse } from './responseUtil';
+
 export async function like({ request, env }) {
 	const url = new URL(request.url);
 
+	console.log("url pathname " + url.pathname);
+	console.log("request " + request);
+
 	if (request.method === 'POST') {
-		const { jokeId } = await request.json();
-		const ip = request.headers.get("CF-Connecting-IP");
+		try {
+			const { jokeId } = await request.json();
+			const ip = request.headers.get("CF-Connecting-IP");
 
-		if (!jokeId) return new Response(JSON.stringify({ message: 'Missing jokeId' }), {
-			status: 400,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
+			if (!jokeId)
+				return jsonResponse({ message: "Missing jokeId" }, 400);
+
+			const voteKey = `voted:${ip}:${jokeId}`;
+			const alreadyVoted = await env.LIKES.get(voteKey);
+			if (alreadyVoted === 'liked') {
+				return jsonResponse({ message: "Already liked" }, 400);
 			}
-		});
 
+			const key = `likes:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			await env.LIKES.put(key, (count + 1).toString());
+			await env.LIKES.put(voteKey, 'liked', { expirationTtl: 86400 }); // expire in 1 day
 
-		const voteKey = `voted:${ip}:${jokeId}`;
-		const alreadyVoted = await env.LIKES.get(voteKey);
-		if (alreadyVoted === 'liked') {
-			return new Response(JSON.stringify({ message: 'Already liked' }), {
-				status: 400,
-				headers: {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				}});
+			return jsonResponse({ message: 'Liked', count: count + 1 });
+		} catch (err) {
+			console.log(err)
+			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
 		}
-
-		const key = `likes:${jokeId}`;
-		const count = parseInt(await env.LIKES.get(key) || '0', 10);
-		await env.LIKES.put(key, (count + 1).toString());
-		await env.LIKES.put(voteKey, 'liked', { expirationTtl: 86400 }); // expire in 1 day
-
-		return new Response(JSON.stringify({ message: 'Liked', count: count + 1 }), {
-			headers: { 'Content-Type': 'application/json',
-				"Access-Control-Allow-Origin": "*" },
-		});
 	}
 
 	if (request.method === 'GET') {
-		const jokeId = url.searchParams.get('jokeId');
-		if (!jokeId) return new Response(JSON.stringify({ message: 'Missing jokeId' }), {
-			status: 400,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*'
-			}
-		});
+
+		try {
+			const jokeId = url.searchParams.get('jokeId');
+			if (!jokeId) return jsonResponse({ message: "Missing jokeId" }, 400);
 
 
-		const key = `likes:${jokeId}`;
-		const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			const key = `likes:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
 
-		return new Response(JSON.stringify({ count }), {
-			headers: { 'Content-Type': 'application/json',
-				"Access-Control-Allow-Origin": "*" },
-		});
+			return jsonResponse(count);
+		} catch (err) {
+			console.log(err)
+			return jsonResponse({ message: "Something went wrong. Please try again later." }, 500);
+		}
 	}
 
-	return new Response('Method not allowed', {
-		status: 405,
-		headers: {
-			'Content-Type': 'application/json',
-			'Access-Control-Allow-Origin': '*'
-		} });
+	return jsonResponse({ message: "Method not allowed" }, 405);
 }
