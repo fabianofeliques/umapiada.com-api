@@ -13,13 +13,14 @@ export async function like(request, env) {
 		}
 
 		try {
-			const { jokeId } = await request.json();
+			const { jokeId, category } = await request.json();
 
-			if (!jokeId)
-				return jsonResponse({ message: "Missing jokeId" }, 400);
+			if (!jokeId || !category)
+				return jsonResponse({ message: "Missing jokeId or category" }, 400);
 
-			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
-			await env.LIKES.put(jokeId, (count + 1).toString());
+			const key = `${category}:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			await env.LIKES.put(key, (count + 1).toString());
 
 			return jsonResponse({ message: 'Liked', count: count + 1 });
 		} catch (err) {
@@ -30,10 +31,14 @@ export async function like(request, env) {
 	if (request.method === 'GET') {
 
 		try {
-			const jokeId = url.searchParams.get('jokeId');
-			if (!jokeId) return jsonResponse({ message: "Missing jokeId" }, 400);
+			const { jokeId, category } = await request.json();
 
-			const count = parseInt(await env.LIKES.get(jokeId) || '0', 10);
+			if (!jokeId || !category)
+				return jsonResponse({ message: "Missing jokeId or category" }, 400);
+
+			const key = `${category}:${jokeId}`;
+			const count = parseInt(await env.LIKES.get(key) || '0', 10);
+			await env.LIKES.put(key, (count + 1).toString());
 
 			return jsonResponse({ count });
 		} catch (err) {
