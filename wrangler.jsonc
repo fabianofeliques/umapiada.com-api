@@ -34,6 +34,50 @@
 		{
 			"binding": "RATE_LIMIT",
 			"id": "83df781192434a1bb8cc5888878e2b0c"
+		},
+		{
+			"binding": "ANIMAL_RATING",
+			"id": "e2b2f851232448ad9831907d3382e5e3"
+		},
+		{
+			"binding": "BAR_RATING",
+			"id": "236ba8135ce8488ea6753f6ecd59a248"
+		},
+		{
+			"binding": "DAD_RATING",
+			"id": "ee826e0135d94c2086ae5b776db1c604"
+		},
+		{
+			"binding": "GEEK_RATING",
+			"id": "0008a945924d45b3af0b510678e75cee"
+		},
+		{
+			"binding": "GEOGRAPHY_RATING",
+			"id": "dece09e655f64168b1a6561bc89da6aa"
+		},
+		{
+			"binding": "KIDS_RATING",
+			"id": "22833f05f671436ab0555b7a5349eb50"
+		},
+		{
+			"binding": "KNOCK_RATING",
+			"id": "dad8ecce14cf4b5381df836647e873ad"
+		},
+		{
+			"binding": "MEDICAL_RATING",
+			"id": "7019f94df68c4e168853854fa93eaef0"
+		},
+		{
+			"binding": "ONELINER_RATING",
+			"id": "e0b4f9de9b284e5080a14f77090e3e2a"
+		},
+		{
+			"binding": "QUOTES_RATING",
+			"id": "8576ee05b9bf4b279c4cd9f199a59fbb"
+		},
+		{
+			"binding": "WORK_RATING",
+			"id": "ea16b87646db42f7a680379165a92fa7"
 		}
 	]
 }

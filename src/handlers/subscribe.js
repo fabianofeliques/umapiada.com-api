@@ -1,4 +1,4 @@
-import { isRateLimited, jsonResponse } from './util';
+import { isRateLimited, jsonResponse } from '../util/util';
 
 
 export async function handleSubscribe(request, env) {

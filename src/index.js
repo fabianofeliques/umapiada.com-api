@@ -1,6 +1,6 @@
 import { handleSubscribe } from "./handlers/subscribe";
 import { handleSendJoke } from "./handlers/sendDailyJoke";
-import { like } from './handlers/like';
+import { rating } from './handlers/like';
 import { dislike } from './handlers/dislike';
 
 export default {
@@ -28,12 +28,8 @@ export default {
 			return handleSendJoke(request, env);
 		}
 
-		if (url.pathname === "/like") {
-			return like(request, env);
-		}
-
-		if (url.pathname === "/dislike") {
-			return dislike(request, env);
+		if (url.pathname === "/like" || url.pathname === "/dislike") {
+			return rating(request, env);
 		}
 
 		return new Response("Not Found", { status: 404 });
