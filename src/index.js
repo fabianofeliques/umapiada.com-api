@@ -1,7 +1,6 @@
 import { handleSubscribe } from "./handlers/subscribe";
 import { handleSendJoke } from "./handlers/sendDailyJoke";
 import { rating } from './handlers/like';
-import { dislike } from './handlers/dislike';
 
 export default {
 	async fetch(request, env) {
