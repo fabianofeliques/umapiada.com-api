@@ -15,7 +15,7 @@ export async function isRateLimited(ip, env) {
 	let count = await env.RATE_LIMIT.get(key);
 	count = parseInt(count || "0");
 
-	if (count >= 10) {
+	if (count >= 10000) {
 		return true;
 	}
 
