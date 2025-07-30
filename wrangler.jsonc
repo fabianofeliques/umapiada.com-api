@@ -18,6 +18,14 @@
 		}
 	],
 
+	"d1_databases": [
+		{
+			"binding": "SUBSCRIBERS_DB",
+			"database_name": "subscribers_db",
+			"database_id": "389b6e6e-fd1e-4728-8d43-3c634eba77d3"
+		}
+	],
+
 	"kv_namespaces": [
 		{
 			"binding": "SUBSCRIBERS",

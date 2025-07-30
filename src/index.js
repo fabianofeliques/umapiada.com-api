@@ -1,4 +1,4 @@
-import { handleSubscribe } from "./handlers/subscribe";
+import { handleConfirm, handleSubscribe } from './handlers/subscribe';
 import { handleSendJoke } from "./handlers/sendDailyJoke";
 import { rating } from './handlers/like';
 
@@ -19,7 +19,7 @@ export default {
 			return new Response(null, { status: 204, headers });
 		}
 
-		if (request.method === "POST" && url.pathname === "/subscribe") {
+		if (url.pathname === "/subscribe") {
 			return handleSubscribe(request, env);
 		}
 
@@ -29,6 +29,10 @@ export default {
 
 		if (url.pathname === "/like" || url.pathname === "/dislike") {
 			return rating(request, env);
+		}
+
+		if (url.pathname === "/confirm") {
+			return handleConfirm(request, env);
 		}
 
 		return new Response("Not Found", { status: 404 });
