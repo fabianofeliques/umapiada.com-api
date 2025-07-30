@@ -107,7 +107,7 @@ async function sendConfirmationEmail(email, confirmationLink, env) {
 						</a>
 						<p style="margin-top: 2rem; font-size: 0.9rem; color: #777;">If you didn't subscribe, no worries — just ignore this email. No jokes will be harmed.</p>
 					</body>
-				</html>;
+				</html>
       `
 		})
 	});
