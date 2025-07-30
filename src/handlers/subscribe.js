@@ -164,7 +164,7 @@ export async function handleConfirm(request, env) {
 	return new Response(null, {
 		status: 302,
 		headers: {
-			"Location": `${HOME_URL}/subscribed/${cookieValue}`,
+			"Location": `https://www.daily-joke.com/subscribed/${cookieValue}`,
 		}
 	})
 }
