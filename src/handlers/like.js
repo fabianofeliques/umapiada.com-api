@@ -1,5 +1,4 @@
 import { isRateLimited, jsonResponse } from '../util/util';
-import { categoryKVMap } from '../util/categories';
 
 export async function rating(request, env) {
 
@@ -13,8 +12,6 @@ export async function rating(request, env) {
 		const ip = request.headers.get('cf-connecting-ip');
 		const isBlocked = await isRateLimited(ip, env);
 		const { jokeId, category } = await request.json();
-		const categoryKey = category.toLowerCase();
-		const kvNamespace = categoryKVMap[categoryKey];
 
 		if (isBlocked) {
 			return jsonResponse({ message: 'Too many requests' }, 429);
@@ -24,15 +21,9 @@ export async function rating(request, env) {
 			if (!jokeId || !category)
 				return jsonResponse({ message: 'Missing jokeId or category' }, 400);
 
-			if (!kvNamespace || !env[kvNamespace]) {
-				return jsonResponse({ message: `Unknown or invalid category: ${category}` }, 400);
-			}
-
-			const kv = env[kvNamespace];
-
-			const key = `${actionType}:${jokeId}`;
-			const count = parseInt(await kv.get(key) || '0', 10);
-			await kv.put(key, (count + 1).toString());
+			const key = `${category}:${actionType}:${jokeId}`;
+			const count = parseInt(await env.JOKE_RATING.get(key) || '0', 10);
+			await env.JOKE_RATING.put(key, (count + 1).toString());
 
 			return jsonResponse({ message: `${actionTypeFormatted}d`, count: count + 1 });
 		} catch (err) {
@@ -45,22 +36,13 @@ export async function rating(request, env) {
 		try {
 			const jokeId = url.searchParams.get('jokeId');
 			const category = url.searchParams.get('category');
-			const categoryKey = category.toLowerCase();
-			const kvNamespace = categoryKVMap[categoryKey];
 
 			if (!jokeId || !category) {
-				console.log('missing jokeId or category');
 				return jsonResponse({ message: 'Missing jokeId or category' }, 400);
 			}
 
-			const kv = env[kvNamespace];
-
-			if (!kv) {
-				return jsonResponse({ message: `Unknown category: ${category}` }, 400);
-			}
-
-			const key = `${actionType}:${jokeId}`;
-			const count = parseInt(await kv.get(key) || '0', 10);
+			const key = `${category}:${actionType}:${jokeId}`;
+			const count = parseInt(await env.JOKE_RATING.get(key) || '0', 10);
 
 			return jsonResponse({ count });
 		} catch (err) {

@@ -10,7 +10,7 @@ export function jsonResponse(body, status = 200) {
 
 export async function isRateLimited(ip, env) {
 	const key = `rate-limit:${ip}`;
-	const ttl = 3600; // 1 hour
+	const ttl = 3600;
 
 	let count = await env.RATE_LIMIT.get(key);
 	count = parseInt(count || "0");
