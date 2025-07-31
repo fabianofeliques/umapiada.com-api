@@ -1,6 +1,6 @@
 import { handleConfirm, handleSubscribe } from './handlers/subscribe';
-import { handleSendJoke } from "./handlers/sendDailyJoke";
 import { rating } from './handlers/like';
+import { handleJokes}  from './handlers/jokes';
 
 export default {
 	async fetch(request, env) {
@@ -22,17 +22,16 @@ export default {
 		if (url.pathname === "/subscribe") {
 			return handleSubscribe(request, env);
 		}
-
-		if (request.method === "POST" && url.pathname === "/send-joke") {
-			return handleSendJoke(request, env);
-		}
-
 		if (url.pathname === "/like" || url.pathname === "/dislike") {
 			return rating(request, env);
 		}
 
 		if (url.pathname === "/confirm") {
 			return handleConfirm(request, env);
+		}
+
+		if (url.pathname.startsWith("/jokes")) {
+			return handleJokes(request, env);
 		}
 
 		return new Response("Not Found", { status: 404 });

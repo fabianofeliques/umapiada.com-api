@@ -23,10 +23,19 @@
 			"binding": "SUBSCRIBERS_DB",
 			"database_name": "subscribers_db",
 			"database_id": "389b6e6e-fd1e-4728-8d43-3c634eba77d3"
+		},
+		{
+			"binding": "JOKES_DB",
+			"database_name": "jokes_db",
+			"database_id": "db4869bf-fa08-4e14-97d8-0f679d5d7c38"
 		}
 	],
 
 	"kv_namespaces": [
+		{
+			"binding": "JOKE_RATING",
+			"id": "9a0e79649ce14f27831bfe47a75994b6"
+		},
 		{
 			"binding": "SUBSCRIBERS",
 			"id": "a4c39b8f1a5b484e9a36601e939569cb"
