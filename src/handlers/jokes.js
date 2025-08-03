@@ -27,7 +27,7 @@ export async function handleJokes(request, env, ctx) {
 		}
 
 		const { results } = await env.JOKES_DB.prepare(
-			'SELECT id, category, title, slug, text, author FROM jokes WHERE category = ? ORDER BY id ASC'
+			'SELECT * FROM jokes WHERE category = ? ORDER BY id ASC'
 		)
 			.bind(category)
 			.all();
