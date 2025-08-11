@@ -5,8 +5,8 @@ export async function handleLogin(request, env) {
 
 	const { user, pass } = await request.json();
 
-	const storedUser = await env.KV_NAMESPACE.get("admin_username");
-	const storedPass = await env.KV_NAMESPACE.get("admin_password");
+	const storedUser = await env.LOGIN.get("admin_username");
+	const storedPass = await env.LOGIN.get("admin_password");
 
 	if (user === storedUser && pass === storedPass) {
 		// Generate some kind of session token or simple cookie
