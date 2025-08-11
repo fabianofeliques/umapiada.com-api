@@ -14,6 +14,7 @@
 		"wrangler": "^4.25.1"
 	},
 	"dependencies": {
-		"resend": "^4.7.0"
+		"resend": "^4.7.0",
+		"slugify": "^1.6.6"
 	}
 }
