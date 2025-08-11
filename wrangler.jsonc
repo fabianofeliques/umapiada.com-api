@@ -35,6 +35,10 @@
 		{
 			"binding": "RATE_LIMIT",
 			"id": "83df781192434a1bb8cc5888878e2b0c"
+		},
+		{
+			"binding": "LOGIN",
+			"id": "45caa9c1b7a441bbb2b09bdc5411c189"
 		}
 	]
 }
