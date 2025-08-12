@@ -2,6 +2,7 @@ import { handleConfirm, handleSubscribe } from './handlers/subscribe';
 import { rating } from './handlers/like';
 import { handleJokes}  from './handlers/jokes';
 import { handleLogin } from './handlers/login';
+import { handleDuelJoke } from './handlers/duel_joke';
 
 export default {
 	async fetch(request, env) {
@@ -37,6 +38,10 @@ export default {
 
 		if (url.pathname.startsWith("/login")) {
 			return handleLogin(request, env);
+		}
+
+		if (url.pathname.startsWith("/duel")) {
+			return handleDuelJoke(request, env);
 		}
 
 		return new Response("Not Found", { status: 404 });
