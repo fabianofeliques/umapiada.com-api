@@ -1,7 +1,7 @@
 export async function handleDuelJoke(request, env, ctx) {
 	const url = new URL(request.url);
 
-	if (url.pathname === "/today" && request.method === "GET") {
+	if (url.pathname === "/duel/today" && request.method === "GET") {
 		const today = new Date().toISOString().split('T')[0];
 
 		const duel = await env.DB.prepare(`
@@ -24,7 +24,7 @@ export async function handleDuelJoke(request, env, ctx) {
 		});
 	}
 
-	if (url.pathname === "/yesterday_winner" && request.method === "GET") {
+	if (url.pathname === "/duel/yesterday_winner" && request.method === "GET") {
 		// Get yesterday's date in yyyy-mm-dd format
 		const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
@@ -54,7 +54,7 @@ export async function handleDuelJoke(request, env, ctx) {
 	}
 
 
-	if (url.pathname === "/vote" && request.method === "POST") {
+	if (url.pathname === "/duel/vote" && request.method === "POST") {
 		const { duelId, isJoke1 } = await request.json();
 		const column = isJoke1 ? "votes_joke1" : "votes_joke2";
 
