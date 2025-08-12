@@ -4,7 +4,7 @@ export async function handleDuelJoke(request, env, ctx) {
 	if (url.pathname === "/duel/today" && request.method === "GET") {
 		const today = new Date().toISOString().split('T')[0];
 
-		const duel = await env.DB.prepare(`
+		const duel = await env.JOKES_DB.prepare(`
 			SELECT d.id    AS duel_id,
 						 d.duel_date,
 						 d.votes_joke1,
@@ -28,7 +28,7 @@ export async function handleDuelJoke(request, env, ctx) {
 		// Get yesterday's date in yyyy-mm-dd format
 		const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
 
-		const duel = await env.DB.prepare(`
+		const duel = await env.JOKES_DB.prepare(`
 			SELECT d.id    AS duel_id,
 						 d.duel_date,
 						 d.votes_joke1,
@@ -58,7 +58,7 @@ export async function handleDuelJoke(request, env, ctx) {
 		const { duelId, isJoke1 } = await request.json();
 		const column = isJoke1 ? "votes_joke1" : "votes_joke2";
 
-		await env.DB.prepare(
+		await env.JOKES_DB.prepare(
 			`UPDATE joke_duels
 			 SET ${column} = ${column} + 1
 			 WHERE id = ?`
