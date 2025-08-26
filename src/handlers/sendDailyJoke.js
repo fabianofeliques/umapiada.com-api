@@ -1,10 +1,9 @@
 import { Resend } from "resend";
 
-const AUDIENCE_ID = "93ceaba8-61e0-4757-ba3c-d204e1543d24";
-
 export async function sendJokeOfTheDayBatch(env) {
 
 	const resend = new Resend(env.RESEND_API_KEY);
+	const AUDIENCE_ID = env.AUDIENCE_ID;
 	// 1. Fetch all jokes from your D1 database
 	const jokes = await env.JOKES_DB.prepare("SELECT * FROM jokes").all();
 
