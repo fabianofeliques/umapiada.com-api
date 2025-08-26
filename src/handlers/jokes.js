@@ -49,7 +49,7 @@ export async function handleJokes(request, env, ctx) {
 		try {
 			const data = await request.json();
 
-			let { category, title, slug, text, author } = data;
+			let { category, title, slug, text, author, metaTitle, metaDescription } = data;
 
 			if (!text) {
 				return new Response(
@@ -79,10 +79,10 @@ export async function handleJokes(request, env, ctx) {
 			author = author || "Daily Joke";
 
 			const insertStmt = await env.JOKES_DB.prepare(
-				`INSERT INTO jokes (category, title, slug, text, author)
-				 VALUES (?, ?, ?, ?, ?)`
+				`INSERT INTO jokes (category, title, slug, text, author, metaTitle, metaDescription)
+				 VALUES (?, ?, ?, ?, ?, ?, ?)`
 			)
-				.bind(category, title, slug, text, author)
+				.bind(category, title, slug, text, author, metaTitle, metaDescription)
 				.run();
 
 			return new Response(
