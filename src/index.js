@@ -3,6 +3,7 @@ import { rating } from './handlers/like';
 import { handleJokes}  from './handlers/jokes';
 import { handleLogin } from './handlers/login';
 import { handleDuelJoke } from './handlers/duel_joke';
+import { sendJokeOfTheDayBatch } from './handlers/sendDailyJoke';
 
 export default {
 	async fetch(request, env) {
@@ -42,6 +43,16 @@ export default {
 
 		if (url.pathname.startsWith("/duel")) {
 			return handleDuelJoke(request, env);
+		}
+
+		if (url.pathname === "/send-daily-joke") {
+			try {
+				await sendJokeOfTheDayBatch(env);
+				return new Response("Joke of the Day sent successfully!", { status: 200 });
+			} catch (err) {
+				console.error(err);
+				return new Response("Failed to send Joke of the Day", { status: 500 });
+			}
 		}
 
 		return new Response("Not Found", { status: 404 });
