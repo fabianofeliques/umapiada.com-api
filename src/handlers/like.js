@@ -7,6 +7,7 @@ export async function rating(request, env) {
 	const isLike = pathname.includes('/like');
 	const actionType = isLike ? 'LIKE' : 'DISLIKE';
 	const actionTypeFormatted = actionType.charAt(0) + actionType.slice(1).toLowerCase();
+	const timestamp = new Date().toISOString();
 
 	if (request.method === 'POST') {
 		const ip = request.headers.get('cf-connecting-ip');
@@ -25,9 +26,18 @@ export async function rating(request, env) {
 			const count = parseInt(await env.JOKE_RATING.get(key) || '0', 10);
 			await env.JOKE_RATING.put(key, (count + 1).toString());
 
+			console.log(JSON.stringify({
+				timestamp,
+				action: actionType,
+				jokeId,
+				category,
+				ip,
+				newCount: count + 1
+			}));
+
 			return jsonResponse({ message: `${actionTypeFormatted}d`, count: count + 1 });
 		} catch (err) {
-			console.error(err);
+			console.error(`[${timestamp}] [ERROR] ${err.message}`, err);
 			return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
 		}
 	}
@@ -46,7 +56,7 @@ export async function rating(request, env) {
 
 			return jsonResponse({ count });
 		} catch (err) {
-			console.error(err);
+			console.error(`[${timestamp}] [ERROR] ${err.message}`, err);
 			return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
 		}
 	}
