@@ -174,23 +174,38 @@ export async function addEmailToResendList(email, env) {
 
 	try {
 		const res = await resend.contacts.create({
-			email: email,
+			email,
 			unsubscribed: false,
 			audienceId: env.AUDIENCE_ID,
 		});
 
-		// Ensure the response contains the 'id' field
-		if (res?.id) {
-			// Save the Resend contact ID in your DB
+		let contactId = res?.id;
+
+		// If no ID is returned (existing unsubscribed contact), fetch it
+		if (!contactId) {
+			const existing = await resend.contacts.list({
+				audienceId: env.AUDIENCE_ID,
+				email,
+			});
+
+			if (existing?.length) {
+				contactId = existing[0].id;
+			}
+		}
+
+		// Save the ID in your DB
+		if (contactId) {
 			await env.SUBSCRIBERS_DB.prepare(
 				`UPDATE subscribers SET resend_id = ? WHERE email = ?`
-			).bind(res.id, email).run();
+			).bind(contactId, email).run();
 		} else {
-			console.warn('Resend contact creation failed: No ID returned');
+			console.warn('Could not get Resend contact ID for', email);
 		}
+
 	} catch (error) {
 		console.error('Error creating Resend contact:', error);
 	}
 }
+
 
 
