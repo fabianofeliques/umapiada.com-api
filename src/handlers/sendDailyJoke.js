@@ -104,7 +104,7 @@ export async function sendJokeOfTheDayBatch(env) {
 			});
 
 			// throttle to 2/sec
-			await delay(500);
+			await delay(700);
 		}
 	} catch (err) {
 		console.error("Unexpected error in sendJokeOfTheDayBatch:", err);
