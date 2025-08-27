@@ -92,7 +92,7 @@ async function sendConfirmationEmail(email, confirmationLink, env) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			from: 'Daily Joke <no-reply@daily-joke.com>',
+			from: 'Daily Joke <contact@daily-joke.com>',
 			to: [email],
 			subject: 'Please confirm your subscription',
 			html: `

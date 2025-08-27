@@ -87,7 +87,7 @@ export async function sendJokeOfTheDay(env) {
 				`;
 
 				const success = await safeSendEmail({
-					from: "Daily Joke <no-reply@daily-joke.com>",
+					from: "Daily Joke <newsletter@daily-joke.com>",
 					to: email,
 					subject: "Your Daily Joke is Here! 😂",
 					html: htmlContent,
