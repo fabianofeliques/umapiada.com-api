@@ -64,7 +64,7 @@ export async function handleSubscribe(request, env) {
 			await env.SUBSCRIBERS_DB.prepare(
 				`INSERT INTO subscribers
 				 (email, is_confirmed, confirmation_token, unsubscribe_token, status, ip_address, created_at, deactivated_at)
-				 VALUES (?, 0, ?, ?, 1, ?, datetime('now'), NULL)`
+				 VALUES (?, 0, ?, ?, 0, ?, datetime('now'), NULL)`
 			)
 				.bind(email, confirmation_token, unsubscribe_token, ip)
 				.run();
