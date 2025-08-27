@@ -175,30 +175,37 @@ export async function addEmailToResendList(email, env) {
 	const resend = new Resend(env.RESEND_API_KEY);
 
 	const decodedEmail = decodeURIComponent(email);
+	console.log('Decoded email:', decodedEmail);
 
 	try {
 		const res = await resend.contacts.create({
-			decodedEmail,
+			email,
 			unsubscribed: false,
 			audienceId: env.AUDIENCE_ID,
 		});
+		console.log('Create response:', res);
 
 		let contactId = res?.id;
+		console.log('Initial contactId from create:', contactId);
 
 		// If no ID is returned (existing unsubscribed contact), fetch it
 		if (!contactId) {
+			console.log('Fetching existing contact...');
 			const existing = await resend.contacts.get({
 				decodedEmail,
 				audienceId: env.AUDIENCE_ID,
 			});
+			console.log('Get response:', existing);
 
 			if (existing?.id) {
 				contactId = existing.id;
 			}
+			console.log('ContactId after get:', contactId);
 		}
 
 		// Save the ID in your DB
 		if (contactId) {
+			console.log(`Saving contactId ${contactId} for email ${email} to DB`);
 			await env.SUBSCRIBERS_DB.prepare(
 				`UPDATE subscribers SET resend_id = ? WHERE email = ?`
 			).bind(contactId, email).run();
