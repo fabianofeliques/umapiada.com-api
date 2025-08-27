@@ -191,7 +191,7 @@ export async function addEmailToResendList(email, env) {
 			});
 
 			if (existing?.length) {
-				contactId = existing[0].id;
+				contactId = existing.data[0].id;
 			}
 		}
 
