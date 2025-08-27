@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { HOME_URL } from '../config';
 
-export async function sendJokeOfTheDayBatch(env) {
+export async function sendJokeOfTheDay(env) {
 	const resend = new Resend(env.RESEND_API_KEY);
 	const AUDIENCE_ID = env.AUDIENCE_ID;
 
@@ -39,7 +39,7 @@ export async function sendJokeOfTheDayBatch(env) {
 		const jokeIndex = today.getDate() % jokes.results.length;
 		const currentJoke = jokes.results[jokeIndex];
 
-		// 2️⃣ Fetch all active subscribers at once
+		// 2️⃣ Fetch all active subscribers
 		const allSubscribers = await env.SUBSCRIBERS_DB.prepare(
 			`SELECT email, unsubscribe_token FROM subscribers WHERE status = 1`
 		).all();
@@ -57,7 +57,7 @@ export async function sendJokeOfTheDayBatch(env) {
 			return;
 		}
 
-		// 4️⃣ Loop through contacts
+		// 4️⃣ Send individual emails
 		for (const contact of contacts) {
 			if (!contact.email || contact.unsubscribed) continue;
 
@@ -96,6 +96,7 @@ export async function sendJokeOfTheDayBatch(env) {
 				</html>
 			`;
 
+			// send email individually
 			await safeSendEmail({
 				from: "Daily Joke <no-reply@daily-joke.com>",
 				to: contact.email,
@@ -103,10 +104,10 @@ export async function sendJokeOfTheDayBatch(env) {
 				html: htmlContent,
 			});
 
-			// throttle to 2/sec
-			await delay(700);
+			// delay between sends
+			await delay(1000);
 		}
 	} catch (err) {
-		console.error("Unexpected error in sendJokeOfTheDayBatch:", err);
+		console.error("Unexpected error in sendJokeOfTheDay:", err);
 	}
 }
