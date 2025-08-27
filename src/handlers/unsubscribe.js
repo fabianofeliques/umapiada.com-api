@@ -45,7 +45,7 @@ export async function handleUnsubscribe(request, env) {
 		// 4. Redirect to success page
 		return new Response(null, {
 			status: 302,
-			headers: { "Location": `${HOME_URL}/unsubscribed/success` }
+			headers: { "Location": `https://www.daily-joke.com/unsubscribed/success` }
 		});
 
 	} catch (err) {
