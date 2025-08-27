@@ -192,7 +192,7 @@ export async function addEmailToResendList(email, env) {
 		if (!contactId) {
 			console.log('Fetching existing contact...');
 			const existing = await resend.contacts.get({
-				decodedEmail,
+				email: decodedEmail,
 				audienceId: env.AUDIENCE_ID,
 			});
 			console.log('Get response:', existing);
