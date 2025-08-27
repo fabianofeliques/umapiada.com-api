@@ -50,7 +50,7 @@ export async function handleSubscribe(request, env) {
 				 SET is_confirmed       = 0,
 						 confirmation_token = ?,
 						 unsubscribe_token  = ?,
-						 status             = 1,
+						 status             = 0,
 						 ip_address         = ?,
 						 created_at         = datetime('now'),
 						 confirmed_at       = NULL,
@@ -138,7 +138,8 @@ export async function handleConfirm(request, env) {
 		 FROM subscribers
 		 WHERE email = ?
 			 AND confirmation_token = ?
-			 AND is_confirmed = 0`
+			 AND is_confirmed = 0
+			 AND status = 0`
 	).bind(email, token).first();
 
 
@@ -153,6 +154,7 @@ export async function handleConfirm(request, env) {
 	const result = await env.SUBSCRIBERS_DB.prepare(
 		`UPDATE subscribers
 		 SET is_confirmed = 1,
+				 status = 1,
 				 confirmed_at = datetime('now')
 		 WHERE id = ?`
 	).bind(subscriber.id).run();

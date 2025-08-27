@@ -43,7 +43,7 @@ export async function sendJokeOfTheDay(env) {
 
 		// 2️⃣ Fetch all active subscribers
 		const allSubscribers = await env.SUBSCRIBERS_DB.prepare(
-			`SELECT email, unsubscribe_token FROM subscribers WHERE status = 1`
+			`SELECT email, unsubscribe_token FROM subscribers WHERE status = 1 AND is_confirmed = 1`
 		).all();
 
 		if (!allSubscribers.results.length) return console.log("No active subscribers");
