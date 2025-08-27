@@ -172,15 +172,25 @@ export async function handleConfirm(request, env) {
 export async function addEmailToResendList(email, env) {
 	const resend = new Resend(env.RESEND_API_KEY);
 
-	const res = await resend.contacts.create({
-		email: email,
-		unsubscribed: false,
-		audienceId: env.AUDIENCE_ID
-	});
+	try {
+		const res = await resend.contacts.create({
+			email: email,
+			unsubscribed: false,
+			audienceId: env.AUDIENCE_ID,
+		});
 
-	// Save the Resend contact ID in your DB
-	await env.SUBSCRIBERS_DB.prepare(
-		`UPDATE subscribers SET resend_id = ? WHERE email = ?`
-	).bind(res.id, email).run();
+		// Ensure the response contains the 'id' field
+		if (res?.id) {
+			// Save the Resend contact ID in your DB
+			await env.SUBSCRIBERS_DB.prepare(
+				`UPDATE subscribers SET resend_id = ? WHERE email = ?`
+			).bind(res.id, email).run();
+		} else {
+			console.warn('Resend contact creation failed: No ID returned');
+		}
+	} catch (error) {
+		console.error('Error creating Resend contact:', error);
+	}
 }
+
 
