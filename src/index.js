@@ -3,7 +3,7 @@ import { rating } from './handlers/like';
 import { handleJokes}  from './handlers/jokes';
 import { handleLogin } from './handlers/login';
 import { handleDuelJoke } from './handlers/duel_joke';
-import { sendJokeOfTheDayBatch } from './handlers/sendDailyJoke';
+import { sendJokeOfTheDay } from './handlers/sendDailyJoke';
 import { handleUnsubscribe } from './handlers/unsubscribe';
 
 export default {
@@ -53,7 +53,7 @@ export default {
 
 		if (url.pathname === "/send-daily-joke") {
 			try {
-				await sendJokeOfTheDayBatch(env);
+				await sendJokeOfTheDay(env);
 				return new Response("Joke of the Day sent successfully!", { status: 200 });
 			} catch (err) {
 				console.error(err);
