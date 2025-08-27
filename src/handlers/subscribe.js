@@ -185,7 +185,7 @@ export async function addEmailToResendList(email, env) {
 		});
 		console.log('Create response:', res);
 
-		let contactId = res?.id;
+		let contactId = res?.data.id;
 		console.log('Initial contactId from create:', contactId);
 
 		// If no ID is returned (existing unsubscribed contact), fetch it
@@ -198,7 +198,7 @@ export async function addEmailToResendList(email, env) {
 			console.log('Get response:', existing);
 
 			if (existing?.id) {
-				contactId = existing.id;
+				contactId = existing.data.id;
 			}
 			console.log('ContactId after get:', contactId);
 		}
