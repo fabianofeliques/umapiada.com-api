@@ -185,13 +185,13 @@ export async function addEmailToResendList(email, env) {
 
 		// If no ID is returned (existing unsubscribed contact), fetch it
 		if (!contactId) {
-			const existing = await resend.contacts.list({
-				audienceId: env.AUDIENCE_ID,
+			const existing = await resend.contacts.get({
 				email,
+				audienceId: env.AUDIENCE_ID,
 			});
 
-			if (existing?.data?.length) {
-				contactId = existing.data[0].id;
+			if (existing?.id) {
+				contactId = existing.id;
 			}
 		}
 
