@@ -170,14 +170,17 @@ export async function handleConfirm(request, env) {
 }
 
 export async function addEmailToResendList(email, env) {
-
 	const resend = new Resend(env.RESEND_API_KEY);
 
-	await resend.contacts.create({
+	const res = await resend.contacts.create({
 		email: email,
 		unsubscribed: false,
 		audienceId: env.AUDIENCE_ID
-	}).then(res => {
-		const resendId = res.id; // save this in your DB for later
-	});}
+	});
+
+	// Save the Resend contact ID in your DB
+	await env.SUBSCRIBERS_DB.prepare(
+		`UPDATE subscribers SET resend_id = ? WHERE email = ?`
+	).bind(res.id, email).run();
+}
 
