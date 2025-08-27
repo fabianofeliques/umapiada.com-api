@@ -176,7 +176,8 @@ export async function addEmailToResendList(email, env) {
 	await resend.contacts.create({
 		email: email,
 		unsubscribed: false,
-		audienceId: '93ceaba8-61e0-4757-ba3c-d204e1543d24'
-	});
-}
+		audienceId: env.AUDIENCE_ID
+	}).then(res => {
+		const resendId = res.id; // save this in your DB for later
+	});}
 

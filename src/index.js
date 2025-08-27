@@ -4,6 +4,7 @@ import { handleJokes}  from './handlers/jokes';
 import { handleLogin } from './handlers/login';
 import { handleDuelJoke } from './handlers/duel_joke';
 import { sendJokeOfTheDayBatch } from './handlers/sendDailyJoke';
+import { handleUnsubscribe } from './handlers/unsubscribe';
 
 export default {
 	async fetch(request, env) {
@@ -25,6 +26,11 @@ export default {
 		if (url.pathname === "/subscribe") {
 			return handleSubscribe(request, env);
 		}
+
+		if (url.pathname === "/unsubscribe") {
+			return handleUnsubscribe(request, env);
+		}
+
 		if (url.pathname === "/like" || url.pathname === "/dislike") {
 			return rating(request, env);
 		}
