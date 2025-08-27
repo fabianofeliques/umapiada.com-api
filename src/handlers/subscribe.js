@@ -174,9 +174,11 @@ export async function handleConfirm(request, env) {
 export async function addEmailToResendList(email, env) {
 	const resend = new Resend(env.RESEND_API_KEY);
 
+	const decodedEmail = decodeURIComponent(email);
+
 	try {
 		const res = await resend.contacts.create({
-			email,
+			decodedEmail,
 			unsubscribed: false,
 			audienceId: env.AUDIENCE_ID,
 		});
@@ -186,7 +188,7 @@ export async function addEmailToResendList(email, env) {
 		// If no ID is returned (existing unsubscribed contact), fetch it
 		if (!contactId) {
 			const existing = await resend.contacts.get({
-				email,
+				decodedEmail,
 				audienceId: env.AUDIENCE_ID,
 			});
 
