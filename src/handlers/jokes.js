@@ -118,9 +118,6 @@ export async function handleJokes(request, env, ctx) {
 			const data = await request.json();
 			const { author, text } = data;
 
-			console.log("author: " + author);
-			console.log("text: " + text);
-
 			if (!author || !text) {
 				return new Response(
 					JSON.stringify({ error: 'Missing required fields: author and text are required' }),
