@@ -1,4 +1,5 @@
 import slugify from 'slugify';
+import { isRateLimited, jsonResponse } from '../util/util';
 
 export async function handleJokes(request, env, ctx) {
 
@@ -104,6 +105,54 @@ export async function handleJokes(request, env, ctx) {
 			);
 		}
 	}
+
+	if (url.pathname === '/user-provided' && request.method === 'POST') {
+		const ip = request.headers.get('cf-connecting-ip');
+		const isBlocked = await isRateLimited(ip, env);
+
+		if (isBlocked) {
+			return jsonResponse({ message: 'Too many requests' }, 429);
+		}
+
+		try {
+			const data = await request.json();
+			const { author, text } = data;
+
+			if (!author || !text) {
+				return new Response(
+					JSON.stringify({ error: 'Missing required fields: author and text are required' }),
+					{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+				);
+			}
+
+			// Auto-generate title from first 6 words
+			let title = text.trim().split(/\s+/).slice(0, 6).join(' ');
+			title = title.charAt(0).toUpperCase() + title.slice(1);
+
+			// Auto-generate slug
+			const slug = slugify(title, { lower: true, strict: true });
+
+			// Insert into user_jokes table with timestamp
+			const insertStmt = await env.USER_JOKES_DB.prepare(
+				`INSERT INTO user_jokes (author, text, title, slug, created_at)
+				 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`
+			)
+				.bind(author, text, title, slug)
+				.run();
+
+			return new Response(
+				JSON.stringify({ message: 'User joke submitted', id: insertStmt.lastInsertRowid }),
+				{ status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+
+		} catch (err) {
+			return new Response(
+				JSON.stringify({ error: 'Invalid JSON or DB error', details: err.message }),
+				{ status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+			);
+		}
+	}
+
 
 
 	return new Response('Not found', { status: 404 });
