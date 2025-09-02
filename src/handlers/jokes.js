@@ -106,7 +106,7 @@ export async function handleJokes(request, env, ctx) {
 		}
 	}
 
-	if (url.pathname === '/user-provided' && request.method === 'POST') {
+	if (url.pathname === '/jokes/user-provided' && request.method === 'POST') {
 		const ip = request.headers.get('cf-connecting-ip');
 		const isBlocked = await isRateLimited(ip, env);
 
