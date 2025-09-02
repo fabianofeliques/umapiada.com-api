@@ -118,6 +118,9 @@ export async function handleJokes(request, env, ctx) {
 			const data = await request.json();
 			const { author, text } = data;
 
+			console.log("author: " + author);
+			console.log("text: " + text);
+
 			if (!author || !text) {
 				return new Response(
 					JSON.stringify({ error: 'Missing required fields: author and text are required' }),
@@ -133,7 +136,7 @@ export async function handleJokes(request, env, ctx) {
 			const slug = slugify(title, { lower: true, strict: true });
 
 			// Insert into user_jokes table with timestamp
-			const insertStmt = await env.USER_JOKES_DB.prepare(
+			const insertStmt = await env.JOKES_DB.prepare(
 				`INSERT INTO user_jokes (author, text, title, slug, created_at)
 				 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`
 			)
