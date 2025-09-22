@@ -1,5 +1,5 @@
 import slugify from 'slugify';
-import { isRateLimited, jsonResponse } from '../util/util';
+import { generateMeta, isRateLimited, jsonResponse } from '../util/util';
 
 export async function handleJokes(request, env, ctx) {
 
@@ -50,7 +50,7 @@ export async function handleJokes(request, env, ctx) {
 		try {
 			const data = await request.json();
 
-			let { category, title, slug, text, author, metaTitle, metaDescription } = data;
+			let { category, title, slug, text } = data;
 
 			if (!text) {
 				return new Response(
@@ -77,7 +77,8 @@ export async function handleJokes(request, env, ctx) {
 
 			// Default category and author
 			category = category || "Others";
-			author = author || "Daily Joke";
+			const author = "Daily Joke";
+			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
 			const insertStmt = await env.JOKES_DB.prepare(
 				`INSERT INTO jokes (category, title, slug, text, author, metaTitle, metaDescription)
