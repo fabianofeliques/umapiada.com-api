@@ -130,15 +130,18 @@ export async function handleJokes(request, env, ctx) {
 			let title = text.trim().split(/\s+/).slice(0, 6).join(' ');
 			title = title.charAt(0).toUpperCase() + title.slice(1);
 
+			const { metaTitle, metaDescription } = generateMeta({ title, text });
+
+
 			// Auto-generate slug
 			const slug = slugify(title, { lower: true, strict: true });
 
 			// Insert into user_jokes table with timestamp
 			const insertStmt = await env.JOKES_DB.prepare(
-				`INSERT INTO user_jokes (author, text, title, slug, created_at)
-				 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`
+				`INSERT INTO user_jokes (author, text, title, slug, metaTitle, metaDescription, created_at)
+				 VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 			)
-				.bind(author, text, title, slug)
+				.bind(author, text, title, slug, metaTitle, metaDescription)
 				.run();
 
 			return new Response(

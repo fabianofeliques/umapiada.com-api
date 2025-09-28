@@ -77,6 +77,14 @@ export async function sendJokeOfTheDay(env) {
 							<a href="https://instagram.com/dailydashjoke" style="color: #e1306c; font-weight: bold; text-decoration: none;">Instagram</a>
 							for even more laughs!
 						</p>
+
+						    <div style="margin: 2rem 0; padding: 1rem; background: #ffeb3b; border-radius: 8px; font-weight: bold; font-size: 1rem; color: #333;">
+      🤖 Our Android app is finally out! Get your daily giggles straight to your phone:
+      <a href="https://play.google.com/store/apps/details?id=com.f2sit.dailyjoke"
+         style="background: #1e88e5; color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; margin-left: 0.5rem; display: inline-block;">
+         Download Now
+      </a>
+    </div>
 						<hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
 						<p style="font-size: 0.85rem; color: #888;">
 							Want to stop receiving jokes?
