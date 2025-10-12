@@ -38,7 +38,11 @@ export async function sendJokeOfTheDay(env) {
 		const jokes = await env.JOKES_DB.prepare("SELECT * FROM jokes").all();
 		if (!jokes.results.length) return console.log("No jokes found");
 		const today = new Date();
-		const jokeIndex = today.getDate() % jokes.results.length;
+		const start = new Date(today.getFullYear(), 0, 0);
+		const diff = today.getTime() - start.getTime();
+		const oneDay = 1000 * 60 * 60 * 24;
+		const dayOfYear = Math.floor(diff / oneDay);
+		const jokeIndex = dayOfYear % jokes.results.length;
 		const currentJoke = jokes.results[jokeIndex];
 
 		// 2️⃣ Fetch all active subscribers
