@@ -151,8 +151,21 @@ export async function handleJokes(request, env, ctx) {
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
 
-			// Auto-generate slug
-			const slug = slugify(title, { lower: true, strict: true });
+			// Generate initial slug
+			let slug = slugify(title, { lower: true, strict: true });
+
+			// ✅ Check if slug already exists
+			const existingSlug = await env.JOKES_DB.prepare(
+				`SELECT slug FROM user_jokes WHERE slug = ? LIMIT 1`
+			)
+				.bind(slug)
+				.first();
+
+			// ✅ If exists, prepend unique ID
+			if (existingSlug) {
+				const uniqueId = crypto.randomUUID().split('-')[0]; // short unique prefix
+				slug = `${uniqueId}-${slug}`;
+			}
 
 			// Insert into user_jokes table with timestamp
 			const insertStmt = await env.JOKES_DB.prepare(
