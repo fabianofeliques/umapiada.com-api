@@ -45,6 +45,8 @@ export async function sendJokeOfTheDay(env) {
 		const jokeIndex = dayOfYear % jokes.results.length;
 		const currentJoke = jokes.results[jokeIndex];
 
+		const jokeUrl = `https://www.daily-joke.com/${currentJoke.category}/${currentJoke.slug}`;
+
 		// 2️⃣ Fetch all active subscribers
 		const allSubscribers = await env.SUBSCRIBERS_DB.prepare(
 			`SELECT email, unsubscribe_token FROM subscribers WHERE status = 1 AND is_confirmed = 1`
@@ -75,15 +77,15 @@ export async function sendJokeOfTheDay(env) {
 							${currentJoke.text.replace(/\n/g, "<br>")}
 						</blockquote>
 						<p style="margin-top: 2rem; font-size: 1rem; color: #444;">
-							👉 Love silly jokes? Check out our
-							<a href="https://www.daily-joke.com" style="color: #1e88e5; font-weight: bold; text-decoration: none;">Website</a>
+							👉 Love this joke? Rate it on our
+							<a href="${jokeUrl}" style="color: #1e88e5; font-weight: bold; text-decoration: none;">Website</a>
 							or follow us on
 							<a href="https://instagram.com/dailydashjoke" style="color: #e1306c; font-weight: bold; text-decoration: none;">Instagram</a>
 							for even more laughs!
 						</p>
 
 						    <div style="margin: 2rem 0; padding: 1rem; background: #ffeb3b; border-radius: 8px; font-weight: bold; font-size: 1rem; color: #333;">
-      🤖 Our Android app is finally out! Get your daily giggles straight to your phone:
+      🤖 Our Android app is out! Get your daily giggles straight to your phone:
       <a href="https://play.google.com/store/apps/details?id=com.f2sit.dailyjoke&utm_source=newsletter&utm_medium=referral"
          style="background: #1e88e5; color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; margin-left: 0.5rem; display: inline-block;">
          Download Now
