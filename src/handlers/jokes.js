@@ -49,23 +49,23 @@ export async function handleJokes(request, env, ctx) {
 	if (url.pathname === '/jokes/create' && request.method === 'POST') {
 		try {
 			const data = await request.json();
-
 			let { category, title, slug, text } = data;
 
 			if (!text) {
 				return new Response(
 					JSON.stringify({ error: 'Missing required field: text' }),
-					{ status: 400,     headers: {
+					{
+						status: 400,
+						headers: {
 							...corsHeaders,
 							'Content-Type': 'application/json'
 						}
-					 }
+					}
 				);
 			}
 
 			// Auto-generate title if missing
 			if (!title) {
-				// Take first 6 words of the joke text
 				const words = text.trim().split(/\s+/).slice(0, 6).join(' ');
 				title = words.charAt(0).toUpperCase() + words.slice(1);
 			}
@@ -75,7 +75,19 @@ export async function handleJokes(request, env, ctx) {
 				slug = slugify(title, { lower: true, strict: true });
 			}
 
-			// Default category and author
+			// Check if slug already exists
+			const existingSlug = await env.JOKES_DB.prepare(
+				`SELECT slug FROM jokes WHERE slug = ? LIMIT 1`
+			)
+				.bind(slug)
+				.first();
+
+			// If exists, append unique ID
+			if (existingSlug) {
+				const uniqueId = crypto.randomUUID().split('-')[0]; // short unique id
+				slug = `${uniqueId}-${slug}`;
+			}
+
 			category = category || "Others";
 			const author = "Daily Joke";
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
@@ -88,8 +100,10 @@ export async function handleJokes(request, env, ctx) {
 				.run();
 
 			return new Response(
-				JSON.stringify({ message: 'Joke created', id: insertStmt.lastInsertRowid }),
-				{ status: 201, headers: {
+				JSON.stringify({ message: 'Joke created', slug, id: insertStmt.lastInsertRowid }),
+				{
+					status: 201,
+					headers: {
 						...corsHeaders,
 						'Content-Type': 'application/json'
 					}
@@ -99,13 +113,17 @@ export async function handleJokes(request, env, ctx) {
 		} catch (err) {
 			return new Response(
 				JSON.stringify({ error: 'Invalid JSON or DB error', details: err.message }),
-				{ status: 400, headers: {
+				{
+					status: 400,
+					headers: {
 						...corsHeaders,
 						'Content-Type': 'application/json'
-					} }
+					}
+				}
 			);
 		}
 	}
+
 
 	if (url.pathname === '/jokes/user-provided' && request.method === 'POST') {
 		const ip = request.headers.get('cf-connecting-ip');
