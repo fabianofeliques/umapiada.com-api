@@ -1,5 +1,5 @@
 {
-	"name": "umapiada.com-api",
+	"name": "umapiada-api",
 	"type": "javascript",
 	"account_id": "dbd5a055459147c302d18d55e91d4323",
 	"main": "src/index.js",
