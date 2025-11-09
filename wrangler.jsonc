@@ -11,7 +11,7 @@
 	},
 	"routes": [
 		{
-			"pattern": "api.umapiada.com.br.br",
+			"pattern": "api.umapiada.com.br",
 			"custom_domain": true
 		}
 	],
