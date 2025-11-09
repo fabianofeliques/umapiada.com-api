@@ -88,8 +88,8 @@ export async function handleJokes(request, env, ctx) {
 				slug = `${uniqueId}-${slug}`;
 			}
 
-			category = category || "Others";
-			const author = "Daily Joke";
+			category = category || "Outros";
+			const author = "Uma Piada";
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
 			const insertStmt = await env.JOKES_DB.prepare(
