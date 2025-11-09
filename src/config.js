@@ -1,1 +1,1 @@
-export const HOME_URL = 'https://api.umapiada.com';
+export const HOME_URL = 'https://api.umapiada.com.br';
