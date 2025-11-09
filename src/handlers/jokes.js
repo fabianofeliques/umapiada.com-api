@@ -13,7 +13,7 @@ export async function handleJokes(request, env, ctx) {
 
 	if (url.pathname === "/jokes/categories" && request.method === "GET") {
 		const { results } = await env.JOKES_DB.prepare(
-			'SELECT DISTINCT category FROM jokes ORDER BY category ASC'
+			'SELECT DISTINCT category FROM jokes_br ORDER BY category ASC'
 		).all();
 
 		const categories = results.map(row => row.category);
@@ -36,7 +36,7 @@ export async function handleJokes(request, env, ctx) {
 		}
 
 		const { results } = await env.JOKES_DB.prepare(
-			'SELECT * FROM jokes WHERE category = ? ORDER BY id ASC'
+			'SELECT * FROM jokes_br WHERE category = ? ORDER BY id ASC'
 		)
 			.bind(category)
 			.all();
@@ -77,7 +77,7 @@ export async function handleJokes(request, env, ctx) {
 
 			// Check if slug already exists
 			const existingSlug = await env.JOKES_DB.prepare(
-				`SELECT slug FROM jokes WHERE slug = ? LIMIT 1`
+				`SELECT slug FROM jokes_br WHERE slug = ? LIMIT 1`
 			)
 				.bind(slug)
 				.first();
@@ -93,7 +93,7 @@ export async function handleJokes(request, env, ctx) {
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
 			const insertStmt = await env.JOKES_DB.prepare(
-				`INSERT INTO jokes (category, title, slug, text, author, metaTitle, metaDescription)
+				`INSERT INTO jokes_br (category, title, slug, text, author, metaTitle, metaDescription)
 				 VALUES (?, ?, ?, ?, ?, ?, ?)`
 			)
 				.bind(category, title, slug, text, author, metaTitle, metaDescription)
@@ -156,7 +156,7 @@ export async function handleJokes(request, env, ctx) {
 
 			// ✅ Check if slug already exists
 			const existingSlug = await env.JOKES_DB.prepare(
-				`SELECT slug FROM user_jokes WHERE slug = ? LIMIT 1`
+				`SELECT slug FROM user_jokes_br WHERE slug = ? LIMIT 1`
 			)
 				.bind(slug)
 				.first();
@@ -169,7 +169,7 @@ export async function handleJokes(request, env, ctx) {
 
 			// Insert into user_jokes table with timestamp
 			const insertStmt = await env.JOKES_DB.prepare(
-				`INSERT INTO user_jokes (author, text, title, slug, metaTitle, metaDescription, created_at)
+				`INSERT INTO user_jokes_br (author, text, title, slug, metaTitle, metaDescription, created_at)
 				 VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 			)
 				.bind(author, text, title, slug, metaTitle, metaDescription)

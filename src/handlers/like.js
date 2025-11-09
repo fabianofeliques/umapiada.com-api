@@ -23,8 +23,8 @@ export async function rating(request, env) {
 				return jsonResponse({ message: 'Missing jokeId or category' }, 400);
 
 			const key = `${category}:${actionType}:${jokeId}`;
-			const count = parseInt(await env.JOKE_RATING.get(key) || '0', 10);
-			await env.JOKE_RATING.put(key, (count + 1).toString());
+			const count = parseInt(await env.JOKE_RATING_BR.get(key) || '0', 10);
+			await env.JOKE_RATING_BR.put(key, (count + 1).toString());
 
 			console.log(JSON.stringify({
 				timestamp,
@@ -52,7 +52,7 @@ export async function rating(request, env) {
 			}
 
 			const key = `${category}:${actionType}:${jokeId}`;
-			const count = parseInt(await env.JOKE_RATING.get(key) || '0', 10);
+			const count = parseInt(await env.JOKE_RATING_BR.get(key) || '0', 10);
 
 			return jsonResponse({ count });
 		} catch (err) {

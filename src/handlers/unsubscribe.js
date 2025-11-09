@@ -18,7 +18,7 @@ export async function handleUnsubscribe(request, env) {
 
 		// 1. Find subscriber in DB
 		const subscriber = await env.SUBSCRIBERS_DB.prepare(
-			`SELECT * FROM subscribers WHERE email = ? AND unsubscribe_token = ? AND status = 1`
+			`SELECT * FROM subscribers_br WHERE email = ? AND unsubscribe_token = ? AND status = 1`
 		).bind(email, token).first();
 
 		if (!subscriber) {
@@ -27,7 +27,7 @@ export async function handleUnsubscribe(request, env) {
 
 		// 2. Update local DB
 		await env.SUBSCRIBERS_DB.prepare(
-			`UPDATE subscribers SET status = 0, deactivated_at = datetime('now') WHERE id = ?`
+			`UPDATE subscribers_br SET status = 0, deactivated_at = datetime('now') WHERE id = ?`
 		).bind(subscriber.id).run();
 
 		// 3. Update Resend contact (unsubscribed)
@@ -45,7 +45,7 @@ export async function handleUnsubscribe(request, env) {
 		// 4. Redirect to success page
 		return new Response(null, {
 			status: 302,
-			headers: { "Location": `https://www.daily-joke.com/unsubscribed/success` }
+			headers: { "Location": `https://www.umapiada.com/unsubscribed/success` }
 		});
 
 	} catch (err) {

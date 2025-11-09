@@ -33,7 +33,7 @@ export async function handleSubscribe(request, env) {
 
 		const existing = await env.SUBSCRIBERS_DB.prepare(
 			`SELECT *
-			 FROM subscribers
+			 FROM subscribers_br
 			 WHERE email = ?`
 		).bind(email).first();
 
@@ -46,7 +46,7 @@ export async function handleSubscribe(request, env) {
 
 		if (existing && !existing.status) {
 			await env.SUBSCRIBERS_DB.prepare(
-				`UPDATE subscribers
+				`UPDATE subscribers_br
 				 SET is_confirmed       = 0,
 						 confirmation_token = ?,
 						 unsubscribe_token  = ?,
@@ -62,7 +62,7 @@ export async function handleSubscribe(request, env) {
 
 		} else {
 			await env.SUBSCRIBERS_DB.prepare(
-				`INSERT INTO subscribers
+				`INSERT INTO subscribers_br
 				 (email, is_confirmed, confirmation_token, unsubscribe_token, status, ip_address, created_at, deactivated_at)
 				 VALUES (?, 0, ?, ?, 0, ?, datetime('now'), NULL)`
 			)
@@ -92,20 +92,20 @@ async function sendConfirmationEmail(email, confirmationLink, env) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			from: 'Daily Joke <contact@daily-joke.com>',
+			from: 'Uma Piada <contato@umapiada.com>',
 			to: [email],
-			subject: 'Please confirm your subscription',
+			subject: 'Por favor confirme sua inscrição',
 			html: `
-				<html lang="en">
+				<html lang="pt-BR">
 					<body style="font-family: sans-serif; text-align: center; padding: 2rem; color: #333;">
-						<h2>Almost there! 🕺</h2>
-						<p>You've just signed up for a daily dose of harmless humor.</p>
-						<p>But before we unleash the giggles, we need to make sure it's really you.</p>
+						<h2>Quase lá! 🕺</h2>
+						<p>Você se inscreveu para uma dose diária de humor.</p>
+						<p>Mas antes de abrirmos a porteira do humor, precisamos verificar se realmente é você.</p>
       			<a href="${confirmationLink}"
       							 style="display: inline-block; padding: 12px 24px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; margin-top: 1rem;">
-							Confirm email.
+							Confirmar email.
 						</a>
-						<p style="margin-top: 2rem; font-size: 0.9rem; color: #777;">If you didn't subscribe, no worries — just ignore this email. No jokes will be harmed.</p>
+						<p style="margin-top: 2rem; font-size: 0.9rem; color: #777;">Se não foi você, não precisa se preocupar - apenas ignore este email. Nenhuma piada se sentirá ofendida.</p>
 					</body>
 				</html>
       `
@@ -135,7 +135,7 @@ export async function handleConfirm(request, env) {
 
 	const subscriber = await env.SUBSCRIBERS_DB.prepare(
 		`SELECT *
-		 FROM subscribers
+		 FROM subscribers_br
 		 WHERE email = ?
 			 AND confirmation_token = ?
 			 AND is_confirmed = 0
@@ -152,7 +152,7 @@ export async function handleConfirm(request, env) {
 	}
 
 	const result = await env.SUBSCRIBERS_DB.prepare(
-		`UPDATE subscribers
+		`UPDATE subscribers_br
 		 SET is_confirmed = 1,
 				 status = 1,
 				 confirmed_at = datetime('now')
@@ -166,7 +166,7 @@ export async function handleConfirm(request, env) {
 	return new Response(null, {
 		status: 302,
 		headers: {
-			"Location": `https://www.daily-joke.com/subscribed/${cookieValue}`,
+			"Location": `https://www.umapiada.com/subscribed/${cookieValue}`,
 		}
 	})
 }
@@ -207,7 +207,7 @@ export async function addEmailToResendList(email, env) {
 		if (contactId) {
 			console.log(`Saving contactId ${contactId} for email ${email} to DB`);
 			await env.SUBSCRIBERS_DB.prepare(
-				`UPDATE subscribers SET resend_id = ? WHERE email = ?`
+				`UPDATE subscribers_br SET resend_id = ? WHERE email = ?`
 			).bind(contactId, email).run();
 		} else {
 			console.warn('Could not get Resend contact ID for', email);

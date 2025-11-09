@@ -27,7 +27,6 @@ export function generateMeta({ title, text }) {
 	const safeTitle = title?.trim() || "";
 	const safeText = text?.trim() || "";
 
-	// Grab the first sentence from the text
 	const firstSentence = safeText.split(/(?<=[.?!])\s+/)[0] || safeText;
 
 	let metaTitle = safeTitle;

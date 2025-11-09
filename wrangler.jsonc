@@ -11,7 +11,7 @@
 	},
 	"routes": [
 		{
-			"pattern": "api.daily-joke.com",
+			"pattern": "api.umapiada.com",
 			"custom_domain": true
 		}
 	],
@@ -29,7 +29,7 @@
 	],
 	"kv_namespaces": [
 		{
-			"binding": "JOKE_RATING",
+			"binding": "JOKE_RATING_BR",
 			"id": "9a0e79649ce14f27831bfe47a75994b6"
 		},
 		{

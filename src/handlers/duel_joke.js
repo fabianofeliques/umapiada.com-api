@@ -13,7 +13,7 @@ export async function handleDuelJoke(request, env, ctx) {
 						 j1.text AS joke1_text,
 						 j2.id   AS joke2_id,
 						 j2.text AS joke2_text
-			FROM joke_duels d
+			FROM joke_duels_br d
 						 JOIN jokes j1 ON d.joke1_id = j1.id
 						 JOIN jokes j2 ON d.joke2_id = j2.id
 			WHERE d.duel_date = ?
@@ -40,7 +40,7 @@ export async function handleDuelJoke(request, env, ctx) {
 						 j2.text AS joke2_text,
 						 w.id    AS winner_joke_id,
 						 w.text  AS winner_joke_text
-			FROM joke_duels d
+			FROM joke_duels_br d
 						 JOIN jokes j1 ON d.joke1_id = j1.id
 						 JOIN jokes j2 ON d.joke2_id = j2.id
 						 JOIN jokes w ON d.winner_id = w.id
@@ -59,7 +59,7 @@ export async function handleDuelJoke(request, env, ctx) {
 		const column = isJoke1 ? "votes_joke1" : "votes_joke2";
 
 		await env.JOKES_DB.prepare(
-			`UPDATE joke_duels
+			`UPDATE joke_duels_br
 			 SET ${column} = ${column} + 1
 			 WHERE id = ?`
 		).bind(duelId).run();
