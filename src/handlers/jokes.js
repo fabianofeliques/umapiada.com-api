@@ -130,7 +130,7 @@ export async function handleJokes(request, env, ctx) {
 		const isBlocked = await isRateLimited(ip, env);
 
 		if (isBlocked) {
-			return jsonResponse({ message: 'Too many requests' }, 429);
+			return jsonResponse({ message: 'Muitas requisições em curto tempo' }, 429);
 		}
 
 		try {

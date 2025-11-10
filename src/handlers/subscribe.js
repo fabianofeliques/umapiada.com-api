@@ -21,14 +21,14 @@ export async function handleSubscribe(request, env) {
 	const isBlocked = await isRateLimited(ip, env);
 
 	if (isBlocked) {
-		return jsonResponse({ message: 'Too many requests' }, 429);
+		return jsonResponse({ message: 'Muitas requisições em curto tempo' }, 429);
 	}
 
 	try {
 		const { email } = await request.json();
 
 		if (!email || !email.includes('@')) {
-			return jsonResponse({ message: 'Invalid email address' }, 400);
+			return jsonResponse({ message: 'Endereço de email inválido' }, 400);
 		}
 
 		const existing = await env.SUBSCRIBERS_DB.prepare(
@@ -38,7 +38,7 @@ export async function handleSubscribe(request, env) {
 		).bind(email).first();
 
 		if (existing && existing.status) {
-			return jsonResponse({ message: 'Already subscribed' }, 409);
+			return jsonResponse({ message: 'Email já inscrito' }, 409);
 		}
 
 		const confirmation_token = generateToken();
@@ -74,11 +74,11 @@ export async function handleSubscribe(request, env) {
 
 		await sendConfirmationEmail(email, confirmationLink, env);
 
-		return jsonResponse({ message: 'Please check your email to confirm your subscription!' });
+		return jsonResponse({ message: 'Por favor, verifique seu email para confirmar sua inscrição!' });
 
 	} catch (err) {
 		console.error(err);
-		return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
+		return jsonResponse({ message: 'Algo deu errado. Por favor tente novamente.' }, 500);
 	}
 }
 
@@ -114,8 +114,8 @@ async function sendConfirmationEmail(email, confirmationLink, env) {
 
 	if (!res.ok) {
 		const errorText = await res.text();
-		console.error('Failed to send confirmation email:', errorText);
-		throw new Error('Failed to send confirmation email');
+		console.error('Error ao enviar email de confirmação:', errorText);
+		throw new Error('Error ao enviar email de confirmação');
 	}
 }
 
@@ -130,7 +130,7 @@ export async function handleConfirm(request, env) {
 	const token = url.searchParams.get('token');
 
 	if (!token) {
-		return jsonResponse({ message: 'Missing token' }, 400);
+		return jsonResponse({ message: 'Token não existente' }, 400);
 	}
 
 	const subscriber = await env.SUBSCRIBERS_DB.prepare(
@@ -144,11 +144,11 @@ export async function handleConfirm(request, env) {
 
 
 	if (!subscriber) {
-		return jsonResponse({ message: 'Invalid token' }, 404);
+		return jsonResponse({ message: 'Token inválido' }, 404);
 	}
 
 	if (subscriber.is_confirmed) {
-		return jsonResponse({ message: 'Subscription already confirmed' }, 200);
+		return jsonResponse({ message: 'Inscrição já confirmada' }, 200);
 	}
 
 	const result = await env.SUBSCRIBERS_DB.prepare(
@@ -166,7 +166,7 @@ export async function handleConfirm(request, env) {
 	return new Response(null, {
 		status: 302,
 		headers: {
-			"Location": `https://www.umapiada.com/subscribed/${cookieValue}`,
+			"Location": `https://www.umapiada.com.br/subscribed/${cookieValue}`,
 		}
 	})
 }

@@ -15,12 +15,12 @@ export async function rating(request, env) {
 		const { jokeId, category } = await request.json();
 
 		if (isBlocked) {
-			return jsonResponse({ message: 'Too many requests' }, 429);
+			return jsonResponse({ message: 'Muitas requisições em curto tempo' }, 429);
 		}
 
 		try {
 			if (!jokeId || !category)
-				return jsonResponse({ message: 'Missing jokeId or category' }, 400);
+				return jsonResponse({ message: 'Categoria ou ID inválidos' }, 400);
 
 			const key = `${category}:${actionType}:${jokeId}`;
 			const count = parseInt(await env.JOKE_RATING_BR.get(key) || '0', 10);
@@ -38,7 +38,7 @@ export async function rating(request, env) {
 			return jsonResponse({ message: `${actionTypeFormatted}d`, count: count + 1 });
 		} catch (err) {
 			console.error(`[${timestamp}] [ERROR] ${err.message}`, err);
-			return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
+			return jsonResponse({ message: 'Algo deu errado. Por favor tente novamente mais tarde.' }, 500);
 		}
 	}
 
@@ -48,7 +48,7 @@ export async function rating(request, env) {
 			const category = url.searchParams.get('category');
 
 			if (!jokeId || !category) {
-				return jsonResponse({ message: 'Missing jokeId or category' }, 400);
+				return jsonResponse({ message: 'Categoria ou ID inválidos' }, 400);
 			}
 
 			const key = `${category}:${actionType}:${jokeId}`;
@@ -57,7 +57,7 @@ export async function rating(request, env) {
 			return jsonResponse({ count });
 		} catch (err) {
 			console.error(`[${timestamp}] [ERROR] ${err.message}`, err);
-			return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
+			return jsonResponse({ message: 'Algo deu errado. Por favor tente novamente mais tarde.' }, 500);
 		}
 	}
 

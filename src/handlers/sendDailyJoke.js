@@ -45,7 +45,7 @@ export async function sendJokeOfTheDay(env) {
 		const jokeIndex = dayOfYear % jokes.results.length;
 		const currentJoke = jokes.results[jokeIndex];
 
-		const jokeUrl = `https://www.umapiada.com/${currentJoke.category}/${currentJoke.slug}`;
+		const jokeUrl = `https://www.umapiada.com.br/${currentJoke.category}/${currentJoke.slug}`;
 
 		// 2️⃣ Fetch all active subscribers_br
 		const allSubscribers = await env.SUBSCRIBERS_DB.prepare(

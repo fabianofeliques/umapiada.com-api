@@ -13,7 +13,7 @@ export async function handleUnsubscribe(request, env) {
 		const token = url.searchParams.get('token');
 
 		if (!email || !token) {
-			return jsonResponse({ message: 'Missing email or token' }, 400);
+			return jsonResponse({ message: 'Token ou email não existentes' }, 400);
 		}
 
 		// 1. Find subscriber in DB
@@ -22,7 +22,7 @@ export async function handleUnsubscribe(request, env) {
 		).bind(email, token).first();
 
 		if (!subscriber) {
-			return jsonResponse({ message: 'Invalid unsubscribe link' }, 404);
+			return jsonResponse({ message: 'Link inválido' }, 404);
 		}
 
 		// 2. Update local DB
@@ -45,11 +45,11 @@ export async function handleUnsubscribe(request, env) {
 		// 4. Redirect to success page
 		return new Response(null, {
 			status: 302,
-			headers: { "Location": `https://www.umapiada.com/unsubscribed/success` }
+			headers: { "Location": `https://www.umapiada.com.br/unsubscribed/success` }
 		});
 
 	} catch (err) {
 		console.error(err);
-		return jsonResponse({ message: 'Something went wrong. Please try again later.' }, 500);
+		return jsonResponse({ message: 'Algo deu errado. Por favor tente novamente mais tarde.' }, 500);
 	}
 }
