@@ -98,7 +98,7 @@ export async function sendJokeOfTheDay(env) {
 				`;
 
 				const success = await safeSendEmail({
-					from: "Uma Piada <newsletter@umapiada.com>",
+					from: "Uma Piada <newsletter@umapiada.com.br>",
 					to: email,
 					subject: "Sua piada do dia está aqui! 😂",
 					html: htmlContent,
