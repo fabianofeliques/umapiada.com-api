@@ -14,8 +14,8 @@ export async function handleDuelJoke(request, env, ctx) {
 						 j2.id   AS joke2_id,
 						 j2.text AS joke2_text
 			FROM joke_duels_br d
-						 JOIN jokes j1 ON d.joke1_id = j1.id
-						 JOIN jokes j2 ON d.joke2_id = j2.id
+						 JOIN jokes_br j1 ON d.joke1_id = j1.id
+						 JOIN jokes_br j2 ON d.joke2_id = j2.id
 			WHERE d.duel_date = ?
 		`).bind(today).first();
 
@@ -41,9 +41,9 @@ export async function handleDuelJoke(request, env, ctx) {
 						 w.id    AS winner_joke_id,
 						 w.text  AS winner_joke_text
 			FROM joke_duels_br d
-						 JOIN jokes j1 ON d.joke1_id = j1.id
-						 JOIN jokes j2 ON d.joke2_id = j2.id
-						 JOIN jokes w ON d.winner_id = w.id
+						 JOIN jokes_br j1 ON d.joke1_id = j1.id
+						 JOIN jokes_br j2 ON d.joke2_id = j2.id
+						 JOIN jokes_br w ON d.winner_id = w.id
 			WHERE d.duel_date = ?
 				AND d.winner_id IS NOT NULL
 		`).bind(yesterday).first();
