@@ -79,15 +79,9 @@ export async function sendJokeOfTheDay(env) {
 						<p style="margin-top: 2rem; font-size: 1rem; color: #444;">
 							👉 Gostou dessa piada? Vote em nosso
 							<a href="${jokeUrl}" style="color: #1e88e5; font-weight: bold; text-decoration: none;">Site</a>
+							ou nos siga no
+							<a href="https://instagram.com/umapiada.com.br" style="color: #e1306c; font-weight: bold; text-decoration: none;">Instagram</a>
 						</p>
-
-						    <div style="margin: 2rem 0; padding: 1rem; background: #ffeb3b; border-radius: 8px; font-weight: bold; font-size: 1rem; color: #333;">
-      🤖 Nosso aplicativo Android está disponível! Tenha todas as piadas diretamente em seu celular:
-      <a href="https://play.google.com/store/apps/details?id=com.f2sit.dailyjoke&utm_source=newsletter&utm_medium=referral"
-         style="background: #1e88e5; color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; margin-left: 0.5rem; display: inline-block;">
-         Baixe Agora
-      </a>
-    </div>
 						<hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
 						<p style="font-size: 0.85rem; color: #888;">
 							Gostaria de parar de receber as piadas?
