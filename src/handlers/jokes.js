@@ -134,12 +134,9 @@ export async function handleJokes(request, env, ctx) {
 			const {
 				id,
 				category,
-				title,
-				slug,
+				title: incomingTitle,
+				slug: incomingSlug,
 				text,
-				author,
-				metaTitle,
-				metaDescription
 			} = data;
 
 			if (!id) {
@@ -152,7 +149,38 @@ export async function handleJokes(request, env, ctx) {
 				);
 			}
 
-			if (!category || !title || !slug || !text || !author) {
+			let slug = incomingSlug;
+			let title = incomingTitle;
+
+			if (!slug) {
+				slug = slugify(title, { lower: true, strict: true });
+			}
+
+			if (!title) {
+				const words = text.trim().split(/\s+/).slice(0, 6).join(' ');
+				title = words.charAt(0).toUpperCase() + words.slice(1);
+			}
+
+			const { metaTitle, metaDescription } = generateMeta({ title, text });
+
+
+			// Check if slug already exists
+			const existingSlug = await env.JOKES_DB.prepare(
+				`SELECT slug
+				 FROM jokes_br
+				 WHERE slug = ?
+				 LIMIT 1`
+			)
+				.bind(slug)
+				.first();
+
+			// If exists, append unique ID
+			if (existingSlug) {
+				const uniqueId = crypto.randomUUID().split('-')[0]; // short unique id
+				slug = `${uniqueId}-${slug}`;
+			}
+
+			if (!category || !title  || !text) {
 				return new Response(
 					JSON.stringify({ error: 'Missing required fields' }),
 					{
@@ -168,7 +196,6 @@ export async function handleJokes(request, env, ctx) {
 						 title = ?,
 						 slug = ?,
 						 text = ?,
-						 author = ?,
 						 metaTitle = ?,
 						 metaDescription = ?
 				 WHERE id = ?`
@@ -178,7 +205,6 @@ export async function handleJokes(request, env, ctx) {
 					title,
 					slug,
 					text,
-					author,
 					metaTitle || '',
 					metaDescription || '',
 					id
