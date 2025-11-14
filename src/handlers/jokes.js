@@ -134,8 +134,6 @@ export async function handleJokes(request, env, ctx) {
 			const {
 				id,
 				category,
-				title: incomingTitle,
-				slug: incomingSlug,
 				text,
 			} = data;
 
@@ -149,17 +147,9 @@ export async function handleJokes(request, env, ctx) {
 				);
 			}
 
-			let slug = incomingSlug;
-			let title = incomingTitle;
-
-			if (!slug) {
-				slug = slugify(title, { lower: true, strict: true });
-			}
-
-			if (!title) {
-				const words = text.trim().split(/\s+/).slice(0, 6).join(' ');
-				title = words.charAt(0).toUpperCase() + words.slice(1);
-			}
+			const words = text.trim().split(/\s+/).slice(0, 6).join(' ');
+			let	title = words.charAt(0).toUpperCase() + words.slice(1);
+			let slug = slugify(title, { lower: true, strict: true });
 
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
