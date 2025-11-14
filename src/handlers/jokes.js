@@ -4,14 +4,14 @@ import { generateMeta, isRateLimited, jsonResponse } from '../util/util';
 export async function handleJokes(request, env, ctx) {
 
 	const corsHeaders = {
-		"Access-Control-Allow-Origin": "*", // Or your site URL instead of '*'
-		"Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-		"Access-Control-Allow-Headers": "Content-Type",
+		'Access-Control-Allow-Origin': '*', // Or your site URL instead of '*'
+		'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+		'Access-Control-Allow-Headers': 'Content-Type'
 	};
 
 	const url = new URL(request.url);
 
-	if (url.pathname === "/jokes/categories" && request.method === "GET") {
+	if (url.pathname === '/jokes/categories' && request.method === 'GET') {
 		const { results } = await env.JOKES_DB.prepare(
 			'SELECT DISTINCT category FROM jokes_br ORDER BY category ASC'
 		).all();
@@ -19,7 +19,7 @@ export async function handleJokes(request, env, ctx) {
 		const categories = results.map(row => row.category);
 
 		return new Response(JSON.stringify(categories), {
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 
@@ -30,7 +30,7 @@ export async function handleJokes(request, env, ctx) {
 				JSON.stringify({ error: 'Missing category param' }),
 				{
 					status: 400,
-					headers: { 'Content-Type': 'application/json' },
+					headers: { 'Content-Type': 'application/json' }
 				}
 			);
 		}
@@ -42,7 +42,7 @@ export async function handleJokes(request, env, ctx) {
 			.all();
 
 		return new Response(JSON.stringify(results), {
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' }
 		});
 	}
 
@@ -77,7 +77,10 @@ export async function handleJokes(request, env, ctx) {
 
 			// Check if slug already exists
 			const existingSlug = await env.JOKES_DB.prepare(
-				`SELECT slug FROM jokes_br WHERE slug = ? LIMIT 1`
+				`SELECT slug
+				 FROM jokes_br
+				 WHERE slug = ?
+				 LIMIT 1`
 			)
 				.bind(slug)
 				.first();
@@ -88,8 +91,8 @@ export async function handleJokes(request, env, ctx) {
 				slug = `${uniqueId}-${slug}`;
 			}
 
-			category = category || "Outros";
-			const author = "Uma Piada";
+			category = category || 'Outros';
+			const author = 'Uma Piada';
 			const { metaTitle, metaDescription } = generateMeta({ title, text });
 
 			const insertStmt = await env.JOKES_DB.prepare(
@@ -124,6 +127,90 @@ export async function handleJokes(request, env, ctx) {
 		}
 	}
 
+	if (url.pathname === '/jokes/modify' && request.method === 'POST') {
+		try {
+			const data = await request.json();
+
+			const {
+				id,
+				category,
+				title,
+				slug,
+				text,
+				author,
+				metaTitle,
+				metaDescription
+			} = data;
+
+			if (!id) {
+				return new Response(
+					JSON.stringify({ error: 'Missing required field: id' }),
+					{
+						status: 400,
+						headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+					}
+				);
+			}
+
+			if (!category || !title || !slug || !text || !author) {
+				return new Response(
+					JSON.stringify({ error: 'Missing required fields' }),
+					{
+						status: 400,
+						headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+					}
+				);
+			}
+
+			const update = await env.JOKES_DB.prepare(
+				`UPDATE jokes_br
+				 SET category = ?,
+						 title = ?,
+						 slug = ?,
+						 text = ?,
+						 author = ?,
+						 metaTitle = ?,
+						 metaDescription = ?
+				 WHERE id = ?`
+			)
+				.bind(
+					category,
+					title,
+					slug,
+					text,
+					author,
+					metaTitle || '',
+					metaDescription || '',
+					id
+				)
+				.run();
+
+			return new Response(
+				JSON.stringify({
+					message: 'Joke updated',
+					id,
+					slug
+				}),
+				{
+					status: 200,
+					headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+				}
+			);
+
+		} catch (err) {
+			return new Response(
+				JSON.stringify({
+					error: 'Invalid JSON or DB error',
+					details: err.message
+				}),
+				{
+					status: 400,
+					headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+				}
+			);
+		}
+
+	}
 
 	if (url.pathname === '/jokes/user-provided' && request.method === 'POST') {
 		const ip = request.headers.get('cf-connecting-ip');
@@ -156,7 +243,10 @@ export async function handleJokes(request, env, ctx) {
 
 			// ✅ Check if slug already exists
 			const existingSlug = await env.JOKES_DB.prepare(
-				`SELECT slug FROM user_jokes_br WHERE slug = ? LIMIT 1`
+				`SELECT slug
+				 FROM user_jokes_br
+				 WHERE slug = ?
+				 LIMIT 1`
 			)
 				.bind(slug)
 				.first();
@@ -187,7 +277,6 @@ export async function handleJokes(request, env, ctx) {
 			);
 		}
 	}
-
 
 
 	return new Response('Not found', { status: 404 });
